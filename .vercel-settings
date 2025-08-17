@@ -1,0 +1,4 @@
+# Force Vercel to use correct settings
+framework=other
+build_command=npm install
+output_directory=server

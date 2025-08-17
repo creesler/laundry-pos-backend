@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirect Test</title>
+</head>
+<body>
+    <h1>Redirect Test Page</h1>
+    <p>Current URL: <span id="currentUrl"></span></p>
+    <p>Local Storage Auth: <span id="authStatus"></span></p>
+    <hr>
+    <button onclick="testLoginRedirect()">Test Login Redirect</button>
+    <button onclick="testDashboardRedirect()">Test Dashboard Redirect</button>
+    <button onclick="clearAuth()">Clear Auth</button>
+
+    <script>
+        // Display current URL
+        document.getElementById('currentUrl').textContent = window.location.href;
+        
+        // Display auth status
+        document.getElementById('authStatus').textContent = 
+            localStorage.getItem('adminAuthenticated') || 'Not authenticated';
+
+        // Test functions
+        function testLoginRedirect() {
+            window.location.href = '/admin/login';
+        }
+
+        function testDashboardRedirect() {
+            window.location.href = '/admin';
+        }
+
+        function clearAuth() {
+            localStorage.removeItem('adminAuthenticated');
+            document.getElementById('authStatus').textContent = 'Not authenticated';
+        }
+    </script>
+</body>
+</html>

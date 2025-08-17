@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+    <h1>Test Page</h1>
+    <p>If you can see this, static file serving is working!</p>
+    <p>Current time: <span id="time"></span></p>
+
+    <script>
+        // Add current time to prove the page is fresh
+        document.getElementById('time').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
