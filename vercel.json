@@ -1,44 +1,18 @@
 {
   "version": 2,
-  "buildCommand": "mkdir -p server/public && cp -r public/* server/public/",
   "builds": [
     {
       "src": "server.js",
       "use": "@vercel/node"
     }
   ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "no-store, no-cache, must-revalidate"
-        },
-        {
-          "key": "Pragma",
-          "value": "no-cache"
-        }
-      ]
-    }
-  ],
   "routes": [
     {
-      "src": "/admin/login",
-      "dest": "server.js"
-    },
-    {
-      "src": "/admin",
-      "dest": "server.js"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/server.js"
     }
-  ]
+  ],
+  "buildCommand": "npm install",
+  "outputDirectory": ".",
+  "installCommand": "npm install --force --no-optional --platform=linux --arch=x64"
 }
-
