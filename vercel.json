@@ -1,15 +1,17 @@
 {
   "version": 2,
-  "framework": null,
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node@18"
     }
-  },
-  "outputDirectory": ".",
-  "buildCommand": "npm install",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
