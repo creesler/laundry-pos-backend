@@ -4,9 +4,25 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server.js"
+    },
+    {
+      "source": "/admin",
+      "destination": "/public/admin/index.html"
+    },
+    {
+      "source": "/admin/login",
+      "destination": "/public/admin/login.html"
+    },
     {
       "source": "/(.*)",
       "destination": "/server.js"
