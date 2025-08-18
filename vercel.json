@@ -6,6 +6,12 @@
       "use": "@vercel/node"
     }
   ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/server.js"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -28,14 +34,5 @@
         }
       ]
     }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/server.js"
-    }
-  ],
-  "buildCommand": "npm install",
-  "outputDirectory": ".",
-  "installCommand": "npm install --force --no-optional --platform=linux --arch=x64"
+  ]
 }
