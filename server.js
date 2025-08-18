@@ -1,3 +1,9 @@
+/**
+ * Laundry POS Backend Server
+ * Version: 1.0.2
+ * Last Updated: 2025-08-18
+ */
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -323,4 +329,4 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Export the Express app for Vercel
-export default app; 
+export default app;
