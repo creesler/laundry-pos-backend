@@ -11,12 +11,56 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <style>
+        .navbar {
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 5px;
+            margin: 0 0.2rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white !important;
+            background: rgba(255,255,255,0.1);
+        }
+        .navbar-brand {
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+        .logout-btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .period-select-group {
+            max-width: 300px;
+            width: 100%;
+        }
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                margin-top: 1rem;
+                padding: 1rem;
+                background: rgba(255,255,255,0.1);
+                border-radius: 8px;
+            }
+            .nav-link {
+                margin: 0.2rem 0;
+            }
+        }
+    </style>
 </head>
 <body>
     <script>
         // Check authentication before loading the page
         if (!localStorage.getItem('adminAuthenticated')) {
-            window.location.replace('/admin/login');
+            window.location.href = '/admin/login.html';
         }
     </script>
 
@@ -32,22 +76,22 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="#" data-section="dashboard">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
                                 <i class="bi bi-speedometer2 me-1"></i>Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="employees">
+                            <a class="nav-link" href="#employees" data-bs-toggle="tab">
                                 <i class="bi bi-people me-1"></i>Employees
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="timesheets">
+                            <a class="nav-link" href="#timesheets" data-bs-toggle="tab">
                                 <i class="bi bi-calendar-check me-1"></i>Timesheets
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#" data-section="inventory">
+                            <a class="nav-link" href="#inventory" data-bs-toggle="tab">
                                 <i class="bi bi-box me-1"></i>Inventory
                             </a>
                         </li>
@@ -60,14 +104,14 @@
         </nav>
 
         <div class="container mt-4">
-            <main class="content">
-                <section id="dashboard" class="section active">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="dashboard">
                     <div class="section-header">
                         <h2>Dashboard</h2>
                     </div>
-                </section>
+                </div>
 
-                <section id="employees" class="section">
+                <div class="tab-pane fade" id="employees">
                     <div class="section-header">
                         <h2>Employee Management</h2>
                     </div>
@@ -122,20 +166,20 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                </section>
+                </div>
 
-                <section id="timesheets" class="section">
+                <div class="tab-pane fade" id="timesheets">
                     <div class="section-header">
                         <h2>Timesheets</h2>
                     </div>
-                </section>
+                </div>
 
-                <section id="inventory" class="section">
+                <div class="tab-pane fade" id="inventory">
                     <div class="section-header">
                         <h2>Inventory</h2>
                     </div>
-                </section>
-            </main>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -145,8 +189,27 @@
         // Add logout functionality
         function logout() {
             localStorage.removeItem('adminAuthenticated');
-            window.location.replace('/admin/login');
+            window.location.href = '/admin/login.html';
         }
+
+        // Wait for DOM content and app.js to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap tabs
+            const tabElements = document.querySelectorAll('[data-bs-toggle="tab"]');
+            tabElements.forEach(tab => {
+                tab.addEventListener('shown.bs.tab', function(event) {
+                    const targetId = event.target.getAttribute('href').substring(1);
+                    if (targetId === 'employees' && window.LaundryAdmin && window.LaundryAdmin.fetchEmployees) {
+                        window.LaundryAdmin.fetchEmployees();
+                    }
+                });
+            });
+
+            // Initialize the dashboard
+            if (window.LaundryAdmin && window.LaundryAdmin.initialize) {
+                window.LaundryAdmin.initialize();
+            }
+        });
     </script>
     <script src="/admin/app.js"></script>
 </body>
