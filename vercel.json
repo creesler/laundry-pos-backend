@@ -16,16 +16,12 @@
       "destination": "/server.js"
     },
     {
-      "source": "/admin",
-      "destination": "/public/admin/index.html"
-    },
-    {
       "source": "/admin/login",
       "destination": "/public/admin/login.html"
     },
     {
-      "source": "/app.js",
-      "destination": "/public/admin/app.js"
+      "source": "/admin",
+      "destination": "/public/admin/index.html"
     },
     {
       "source": "/admin/(.*)",
