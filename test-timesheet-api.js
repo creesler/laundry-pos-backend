@@ -1,7 +1,9 @@
 import fetch from 'node-fetch';
 
 async function testTimesheetAPI() {
-  const API_URL = 'http://localhost:5000/api';
+  const API_URL = process.env.NODE_ENV === 'production'
+    ? 'https://laundry-pos-backend.vercel.app/api'
+    : 'http://localhost:5000/api';
   const testEmployee = 'amy wanders';
 
   console.log('🧪 Starting Timesheet API Tests...\n');
