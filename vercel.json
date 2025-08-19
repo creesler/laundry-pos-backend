@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "// Deployment trigger - updated routes": "2024-02-20 15:30",
-  "// Update comment": "Fixed admin dashboard routes and static file handling - v1.0.1",
   "builds": [
     {
       "src": "server.js",
