@@ -6,13 +6,370 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ... existing styles ... */
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 20px;
+        }
+        #chartContainer {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .date-navigation {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+        #dateRangeDisplay {
+            font-size: 1.2em;
+            font-weight: 500;
+            min-width: 200px;
+            text-align: center;
+            padding: 5px 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 12px 20px;
+        }
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+            border-bottom: 2px solid #0d6efd;
+            margin-bottom: -2px;
+        }
+        .employee-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .employee-tabs .tab {
+            padding: 8px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s;
+        }
+        .employee-tabs .tab:hover {
+            background: #f8f9fa;
+        }
+        .employee-tabs .tab.active {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
     </style>
 </head>
 <body>
-    <!-- ... existing body content ... -->
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Laundry Dashboard</span>
+            <button id="logoutBtn" class="btn btn-outline-light" onclick="handleLogout()">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <div class="container-fluid main-content">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#salesSection">
+                    <i class="bi bi-graph-up"></i> Sales
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#employeesSection">
+                    <i class="bi bi-people"></i> Employees
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#timesheetsSection">
+                    <i class="bi bi-clock"></i> Timesheets
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#inventorySection">
+                    <i class="bi bi-box-seam"></i> Inventory
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Sales Section -->
+            <div id="salesSection" class="tab-pane active">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <label for="periodFilter" class="form-label">Select Period</label>
+                                <select id="periodFilter" class="form-select">
+                                    <option value="all">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="yesterday">Yesterday</option>
+                                    <option value="thisWeek">This Week</option>
+                                    <option value="lastWeek">Last Week</option>
+                                    <option value="thisMonth">This Month</option>
+                                    <option value="lastMonth">Last Month</option>
+                                    <option value="thisYear">This Year</option>
+                                    <option value="lastYear">Last Year</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Navigation -->
+                <div class="date-navigation mb-3">
+                    <button id="prevPeriod" class="btn btn-outline-primary">
+                        <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    <span id="dateRangeDisplay">All Time</span>
+                    <button id="nextPeriod" class="btn btn-outline-primary">
+                        Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                    <button id="refreshButton" class="btn btn-primary ms-3">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                </div>
+
+                <!-- Chart Container -->
+                <div class="card">
+                    <div class="card-body">
+                        <div id="chartContainer">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employees Section -->
+            <div id="employeesSection" class="tab-pane fade">
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Add/Edit Employee</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="employeeForm">
+                                    <input type="hidden" id="employeeId">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="name" class="form-label">Name</label>
+                                            <input type="text" id="name" class="form-control" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="contactNumber" class="form-label">Contact Number</label>
+                                            <input type="text" id="contactNumber" class="form-control">
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="address" class="form-label">Address</label>
+                                            <input type="text" id="address" class="form-control">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="role" class="form-label">Role</label>
+                                            <select id="role" class="form-select" required>
+                                                <option value="staff">Staff</option>
+                                                <option value="manager">Manager</option>
+                                                <option value="admin">Admin</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="status" class="form-label">Status</label>
+                                            <select id="status" class="form-select" required>
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <button type="submit" id="submitBtn" class="btn btn-primary">Add Employee</button>
+                                            <button type="button" id="clearBtn" class="btn btn-secondary">Clear</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Employees List</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="employeeTable" class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timesheets Section -->
+            <div id="timesheetsSection" class="tab-pane fade">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Timesheets</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Employee Selection Tabs -->
+                        <div id="employeeTabs" class="employee-tabs"></div>
+
+                        <!-- Date Range Selection -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="timesheetStartDate" class="form-label">Start Date</label>
+                                <input type="date" id="timesheetStartDate" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="timesheetEndDate" class="form-label">End Date</label>
+                                <input type="date" id="timesheetEndDate" class="form-control">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="d-block">&nbsp;</label>
+                                <button class="btn btn-primary filter-btn">
+                                    <i class="bi bi-funnel"></i> Filter
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Timesheet Table -->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Clock In</th>
+                                        <th>Clock Out</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timesheetTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Total Hours -->
+                        <div class="mt-4 text-end">
+                            <h5>Total Hours: <span id="totalHours" class="badge bg-primary">0</span></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Section -->
+            <div id="inventorySection" class="tab-pane fade">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <label for="inventoryChartType" class="form-label">Chart Type</label>
+                                <select id="inventoryChartType" class="form-select">
+                                    <option value="stock">Current Stock</option>
+                                    <option value="usage">Usage Trends</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" id="inventoryPeriodControls" style="display: none;">
+                        <div class="card">
+                            <div class="card-body">
+                                <label for="inventoryPeriod" class="form-label">Period</label>
+                                <select id="inventoryPeriod" class="form-select">
+                                    <option value="week">Last Week</option>
+                                    <option value="month">Last Month</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <label class="d-block">&nbsp;</label>
+                                <button id="refreshInventoryButton" class="btn btn-primary">
+                                    <i class="bi bi-arrow-clockwise"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Chart -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div id="inventoryChartContainer" style="height: 400px;">
+                            <canvas id="inventoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Table -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Inventory Status</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Current Stock</th>
+                                        <th>Max Stock</th>
+                                        <th>Last Updated</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div id="messageBox" class="message-box alert" style="display: none;"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="app.js"></script>
+    <script src="/admin/app.js"</script>
 </body>
-</html> 
+</html>
