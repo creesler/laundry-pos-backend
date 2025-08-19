@@ -1,1 +1,5 @@
-Deploy trigger: ${new Date().toISOString()}
+Deployment triggered: 2024-02-20
+Changes:
+- Updated vercel.json routes
+- Fixed admin dashboard paths
+- Added proper static file handling
