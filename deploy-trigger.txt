@@ -1,5 +1,8 @@
-Deployment triggered: 2024-02-20
+Deployment triggered: 2024-02-20 16:00
+Version: 1.0.2
 Changes:
-- Updated vercel.json routes
+- Fixed vercel.json schema validation
+- Updated route handling
+- Added filesystem handler
 - Fixed admin dashboard paths
-- Added proper static file handling
+Last update: 2024-02-20 16:00:00
