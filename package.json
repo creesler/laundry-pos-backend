@@ -1,11 +1,13 @@
 {
   "name": "laundry-pos-api",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "build": "echo 'Building...' && npm install",
+    "vercel-build": "echo 'Vercel build starting...' && npm install"
   },
   "dependencies": {
     "cors": "^2.8.5",
